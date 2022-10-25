@@ -9,7 +9,7 @@ class SearchEngine():
     def __init__(self, invertedIndex: InvertedIndex) -> None:
         self.invertedIndex = invertedIndex
 
-    def search_implicit_or(self, query: str) -> list[int]:
+    def search(self, query: str, operator: str = "AND") -> list[int]:
         """
         Returns a list of document IDs that matches the query.
         """
@@ -22,8 +22,16 @@ class SearchEngine():
                     match_list = self.invertedIndex[term]
 
                 else:
-                    match_list = self.invertedIndex.merge_terms(
-                        match_list, self.invertedIndex[term])
+                    if (operator == "AND"):
+                        match_list = self.invertedIndex.merge_or(
+                            match_list, self.invertedIndex[term])
+                    elif (operator == "OR"):
+                        match_list = self.invertedIndex.merge_and(
+                            match_list, self.invertedIndex[term])
+                    else:
+                        # error invalid operator
+                        print("Invalid operator")
+                        return
 
         return match_list
 

@@ -16,7 +16,7 @@ if __name__ == '__main__':
     document_names = ['norge.txt', 'sverige.txt', 'danmark.txt']
     active_documents = read_documents(document_names)
 
-    query = "Nordisk"
+    query = " halvy en geografisk"
 
     index = InvertedIndex()
     normalizer = Normalizer()
@@ -29,8 +29,10 @@ if __name__ == '__main__':
         normalized_tokens = normalizer.normalize(document.get_tokens())
         index.build_index(document.doc_id, normalized_tokens)
 
+    print("index", index)
     print("Searching...")
 
-    res = search_engine.search_implicit_or(query)
-    res = search_engine.get_doc_names(res, active_documents)
+    res = search_engine.search(query, "AND")
     print("Matches:", res)
+    # res = search_engine.get_doc_names(res, active_documents)
+    # print("Matches:", res)

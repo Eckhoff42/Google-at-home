@@ -37,9 +37,9 @@ class InvertedIndex():
         for term in document.get_tokens():
             self[term] = document.doc_id
 
-    def merge_terms(self, term_a: list[int], term_b: list[int]) -> list[int]:
+    def merge_or(self, term_a: list[int], term_b: list[int]) -> list[int]:
         """
-        Merge two terms into one.
+        Merge two posting lists into one
         """
         current_a = 0
         current_b = 0
@@ -57,3 +57,24 @@ class InvertedIndex():
             else:
                 merged.append(term_b[current_b])
                 current_b += 1
+        return merged
+
+    def merge_and(self, term_a: list[int], term_b: list[int]) -> list[int]:
+        """
+        Merge two posting lists into one where IDs are equal
+        """
+        current_a = 0
+        current_b = 0
+
+        merged = []
+        while current_a < len(term_a) and current_b < len(term_b):
+            print(term_a[current_a], term_b[current_b])
+            if term_a[current_a] == term_b[current_b]:
+                merged.append(term_a[current_a])
+                current_a += 1
+                current_b += 1
+            elif term_a[current_a] < term_b[current_b]:
+                current_a += 1
+            else:
+                current_b += 1
+        return merged
