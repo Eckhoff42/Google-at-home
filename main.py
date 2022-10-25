@@ -1,4 +1,5 @@
 
+from Compressor import Compressor
 from Normalizer import Normalizer
 from Document import Document
 from InvertedIndex import InvertedIndex
@@ -14,6 +15,8 @@ def read_documents(filenames: str) -> list[Document]:
 
 if __name__ == '__main__':
     document_names = ['norge.txt', 'sverige.txt', 'danmark.txt']
+    stop_list = ['er', 'og', 'i', 'et', 'en', 'ei', 'den', 'til', 'på',
+                 'de', 'som', 'med', 'for', 'at', 'av', 'fra', 'har', 'om', 'å']
     active_documents = read_documents(document_names)
 
     query = " halvy en geografisk"
@@ -21,6 +24,7 @@ if __name__ == '__main__':
     index = InvertedIndex()
     normalizer = Normalizer()
     search_engine = SearchEngine(index)
+    compressor = Compressor(stop_list)
 
     print("Building index...")
 
@@ -30,9 +34,14 @@ if __name__ == '__main__':
         index.build_index(document.doc_id, normalized_tokens)
 
     print("index", index)
-    print("Searching...")
 
+    print("compressing index...")
+    size_before = len(index)
+    compressor.compress_inverted_index_stop_words(index)
+    print("size before:", size_before, "size after:", len(index))
+
+    print("Searching...")
     res = search_engine.search(query, "AND")
     print("Matches:", res)
-    # res = search_engine.get_doc_names(res, active_documents)
-    # print("Matches:", res)
+    res = search_engine.get_doc_names(res, active_documents)
+    print("Matches:", res)

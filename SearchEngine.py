@@ -23,10 +23,10 @@ class SearchEngine():
 
                 else:
                     if (operator == "AND"):
-                        match_list = self.invertedIndex.merge_or(
+                        match_list = self.invertedIndex.merge_and(
                             match_list, self.invertedIndex[term])
                     elif (operator == "OR"):
-                        match_list = self.invertedIndex.merge_and(
+                        match_list = self.invertedIndex.merge_or(
                             match_list, self.invertedIndex[term])
                     else:
                         # error invalid operator

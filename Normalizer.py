@@ -21,3 +21,13 @@ class Normalizer():
             terms[i] = self.normalize_term(term)
 
         return terms
+
+    def lemmatize_term(self, term: str) -> str:
+        # TODO!
+        pass
+
+    def lemmatize(self, terms: str) -> str:
+        for i, term in enumerate(terms):
+            terms[i] = self.lemmatize_term(term)
+
+        return terms
