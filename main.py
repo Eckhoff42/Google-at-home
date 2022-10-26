@@ -27,10 +27,12 @@ if __name__ == '__main__':
     compressor = Compressor(stop_list)
 
     print("Building index...")
-
+    print("Normalizing terms for space efficiency...")
+    print("Stemming terms for space efficiency...")
     # normalize terms and build inverted index
     for document in active_documents:
         normalized_tokens = normalizer.normalize(document.get_tokens())
+        # stemmed_tokens = normalizer.stem(normalized_tokens)
         index.build_index(document.doc_id, normalized_tokens)
 
     print("index", index)
@@ -38,7 +40,9 @@ if __name__ == '__main__':
     print("compressing index...")
     size_before = len(index)
     compressor.compress_inverted_index_stop_words(index)
-    print("size before:", size_before, "size after:", len(index))
+    improvement = round(size_before/(size_before-len(index)), 0)
+    print(
+        f"removed {size_before-len(index)} posting lists {improvement}% of the index")
 
     print("Searching...")
     res = search_engine.search(query, "AND")
