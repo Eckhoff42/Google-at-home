@@ -37,9 +37,12 @@ class Normalizer():
         c = re.sub(r'ational$', 'ate', term)
         c = re.sub(r'tional$', 'tion', term)
 
-        pass
+        return c
 
-    def stem(self, terms: str) -> str:
+    def stem(self, terms: list[str]) -> str:
+        """
+        Stem all terms in the list using the a simplified Porter Stemmer algorithm.
+        """
         for i, term in enumerate(terms):
             terms[i] = self.stem_term(term)
 

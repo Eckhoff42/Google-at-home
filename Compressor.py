@@ -17,3 +17,11 @@ class Compressor():
 
         for term in del_terms:
             del inverted_index.index[term]
+
+    def remove_stop_words(self, string: str):
+        new_string = ""
+        for term in string.split():
+            if term not in self.stop_list:
+                new_string += " " + term
+
+        return new_string

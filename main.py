@@ -19,7 +19,7 @@ if __name__ == '__main__':
                  'de', 'som', 'med', 'for', 'at', 'av', 'fra', 'har', 'om', 'å']
     active_documents = read_documents(document_names)
 
-    query = " halvy en geografisk"
+    query = " halvy en geografisk ligger"
 
     index = InvertedIndex()
     normalizer = Normalizer()
@@ -45,7 +45,9 @@ if __name__ == '__main__':
         f"removed {size_before-len(index)} posting lists {improvement}% of the index")
 
     print("Searching...")
-    res = search_engine.search(query, "AND")
+    # res = search_engine.search(query, "AND")
+    query = compressor.remove_stop_words(query)
+    res = search_engine.search_n_of_m(query, 100)
     print("Matches:", res)
-    res = search_engine.get_doc_names(res, active_documents)
-    print("Matches:", res)
+    # res = search_engine.get_doc_names(res, active_documents)
+    # print("Matches:", res)
