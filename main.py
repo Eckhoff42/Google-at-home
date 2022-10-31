@@ -1,6 +1,7 @@
 
 import argparse
 import os
+from xmlrpc.client import boolean
 from Compressor import Compressor
 from Normalizer import Normalizer
 from Document import Document
@@ -24,6 +25,8 @@ def read_files_in_dir(dir_name: str) -> list[str]:
             documents.append(Document(i, path))
     return documents
 
+# enum for the different search modes
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
@@ -32,7 +35,7 @@ if __name__ == '__main__':
     parser.add_argument("-dir", "--directory", type=str, required=True,)
     parser.add_argument("-q", "--query", type=str, required=True,)
     parser.add_argument("-o", "--operator", type=str,
-                        required=False, default="AND",)
+                        required=False, default="AND", choices=["AND", "OR", "N_OF_M"],)
     args = parser.parse_args()
 
     # initialize objects
@@ -64,10 +67,18 @@ if __name__ == '__main__':
     print(
         f"removed {size_before-len(index)} posting lists {improvement}% of the index")
 
-    print("Searching...")
-    # res = search_engine.search(query, "AND")
+    print(f"Searching with operator {operator}...")
     query = compressor.remove_stop_words(query)
-    res = search_engine.search_n_of_m(query, 100)
-    print("Matches:", res)
-    # res = search_engine.get_doc_names(res, active_documents)
-    # print("Matches:", res)
+    results = []
+    if (operator in ["AND", "OR"]):
+        results = search_engine.search(query, operator=operator)
+    elif (operator == "N_OF_M"):
+        results = search_engine.search_n_of_m(
+            query, match_percentage=0.5)
+
+    # show results
+    if (len(results) == 0):
+        print("No results found")
+    else:
+        file_names = search_engine.get_doc_names(results, active_documents)
+        print("Matches:", file_names)
