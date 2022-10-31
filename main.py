@@ -1,4 +1,6 @@
 
+import argparse
+import os
 from Compressor import Compressor
 from Normalizer import Normalizer
 from Document import Document
@@ -13,18 +15,36 @@ def read_documents(filenames: str) -> list[Document]:
     return documents
 
 
+def read_files_in_dir(dir_name: str) -> list[str]:
+    # get the file names of documents in the given directory
+    documents = []
+    for i, filename in enumerate(os.listdir(dir_name)):
+        if filename.endswith(".txt"):
+            path = dir_name + "/" + filename
+            documents.append(Document(i, path))
+    return documents
+
+
 if __name__ == '__main__':
-    document_names = ['norge.txt', 'sverige.txt', 'danmark.txt']
-    stop_list = ['er', 'og', 'i', 'et', 'en', 'ei', 'den', 'til', 'på',
-                 'de', 'som', 'med', 'for', 'at', 'av', 'fra', 'har', 'om', 'å']
-    active_documents = read_documents(document_names)
+    parser = argparse.ArgumentParser(
+        description="Search Engine for a given set of documents",
+        usage="python3 main.py -dir < directory-name > -q < query > -o < operator >")
+    parser.add_argument("-dir", "--directory", type=str, required=True,)
+    parser.add_argument("-q", "--query", type=str, required=True,)
+    parser.add_argument("-o", "--operator", type=str,
+                        required=False, default="AND",)
+    args = parser.parse_args()
 
-    query = " halvy en geografisk ligger"
-
+    # initialize objects
     index = InvertedIndex()
     normalizer = Normalizer()
     search_engine = SearchEngine(index)
-    compressor = Compressor(stop_list)
+    compressor = Compressor()
+
+    # initialize variables
+    active_documents = read_files_in_dir(args.directory)
+    query = args.query
+    operator = args.operator
 
     print("Building index...")
     print("Normalizing terms for space efficiency...")

@@ -2,8 +2,9 @@ from InvertedIndex import InvertedIndex
 
 
 class Compressor():
-    def __init__(self, stop_list: list[str]) -> None:
-        self.stop_list = stop_list
+    def __init__(self) -> None:
+        self.stop_list = ['er', 'og', 'i', 'et', 'en', 'ei', 'den', 'til', 'på',
+                          'de', 'som', 'med', 'for', 'at', 'av', 'fra', 'har', 'om', 'å']
 
     def compress_inverted_index_stop_words(self, inverted_index: InvertedIndex) -> None:
         """
