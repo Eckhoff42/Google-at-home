@@ -9,15 +9,7 @@ from InvertedIndex import InvertedIndex
 from SearchEngine import SearchEngine
 
 
-def read_documents(filenames: str) -> list[Document]:
-    documents = []
-    for i, filename in enumerate(filenames):
-        documents.append(Document(i, open(filename).read(), filename))
-    return documents
-
-
 def read_files_in_dir(dir_name: str) -> list[str]:
-    # get the file names of documents in the given directory
     documents = []
     for i, filename in enumerate(os.listdir(dir_name)):
         if filename.endswith(".txt"):
@@ -25,18 +17,30 @@ def read_files_in_dir(dir_name: str) -> list[str]:
             documents.append(Document(i, path))
     return documents
 
-# enum for the different search modes
+
+def check_args(args):
+    if not os.path.isdir(args.directory):
+        print(f"The directory '{args.directory}' does not exist")
+        exit(1)
+    for filename in os.listdir(args.directory):
+        if filename.endswith(".txt"):
+            return
+    print(f"The directory '{args.directory}' does not contain any .txt files")
+    exit(1)
 
 
 if __name__ == '__main__':
+    # parse command line arguments
     parser = argparse.ArgumentParser(
         description="Search Engine for a given set of documents",
         usage="python3 main.py -dir < directory-name > -q < query > -o < operator >")
-    parser.add_argument("-dir", "--directory", type=str, required=True,)
+    parser.add_argument("-dir", "--directory", type=str,
+                        required=False, default="corpus",)
     parser.add_argument("-q", "--query", type=str, required=True,)
     parser.add_argument("-o", "--operator", type=str,
                         required=False, default="AND", choices=["AND", "OR", "N_OF_M"],)
     args = parser.parse_args()
+    check_args(args)
 
     # initialize objects
     index = InvertedIndex()
@@ -49,16 +53,13 @@ if __name__ == '__main__':
     query = args.query
     operator = args.operator
 
-    print("Building index...")
+    print(f"Building index of {len(active_documents)} documents...")
     print("Normalizing terms for space efficiency...")
     print("Stemming terms for space efficiency...")
-    # normalize terms and build inverted index
     for document in active_documents:
         normalized_tokens = normalizer.normalize(document.get_tokens())
         # stemmed_tokens = normalizer.stem(normalized_tokens)
         index.build_index(document.doc_id, normalized_tokens)
-
-    print("index", index)
 
     print("compressing index...")
     size_before = len(index)

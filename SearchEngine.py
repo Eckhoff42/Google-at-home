@@ -83,16 +83,12 @@ class SearchEngine():
                 posting_lists.append(self.invertedIndex[term])
                 cursors.append((len(posting_lists)-1, 0))
 
-        print(posting_lists)
-        print(cursors)
-
         # document at a time traversal
         current_doc = self.__next_document(posting_lists, cursors)
         while current_doc != None:
             nr_of_hits = self.__count_occurrences(
                 posting_lists, cursors, current_doc)
 
-            print(current_doc, " hits ", nr_of_hits, " n is", n)
             if nr_of_hits >= n:
                 match_list.append(current_doc)
 

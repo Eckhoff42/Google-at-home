@@ -1,8 +1,8 @@
 # Search-engine-algorithm-collection
-A collection of algorithms used in search engines implemented by myself 
+A collection of algorithms used in search engines implemented by myself. 
 
 ## How to run
-Leave the files you want to index in the `corpus/` directory. There are currently some demo files in the directory.
+Leave the files you want to index in the `corpus/` directory. currently only .txt files are indexed. There are currently some demo files in the directory.
 
 run the file
 ```
@@ -32,7 +32,7 @@ normalizing operations
 - removing non-alphabetic characters: `example[1*] -> example`
 - stemming: `ies -> i`
 
-**Stemming** is performed using a simplified *Porter stemming algorithm*. The algorithm is used to truncate different endings of terms into one. By doing this different forms of the same word is transformed into the same. 
+**Stemming** is performed using a simplified *Porter stemming algorithm*. The algorithm is used to truncate different endings of terms into one. By doing this different forms of the same word is transformed into the same. NB: this algorithm is english specific
 
 ## Compressor
 Compressing the inverted index has multiple benefits. A smaller index uses less memory that allows bigger parts of large indexes to be in memory at the same time. Another benefit is better query evaluation. Normalization is a form of compression where multiple words with the same meaning eg. "do, does, doing" is interpreted as representing the same. This leads to better query evaluation.
