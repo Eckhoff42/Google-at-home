@@ -39,6 +39,7 @@ if __name__ == '__main__':
     parser.add_argument("-q", "--query", type=str, required=True,)
     parser.add_argument("-o", "--operator", type=str,
                         required=False, default="AND", choices=["AND", "OR", "N_OF_M"],)
+
     args = parser.parse_args()
     check_args(args)
 
