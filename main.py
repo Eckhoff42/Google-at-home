@@ -85,6 +85,11 @@ def ranked_search_engine_test(args):
     query = args.query
     operator = args.operator
 
+    print(f"Building index of {len(active_documents)} documents...")
+    for document in active_documents:
+        normalized_tokens = normalizer.normalize(document.get_tokens())
+        index.build_multiplicity_index(document.doc_id, normalized_tokens)
+
 
 if __name__ == '__main__':
     # parse command line arguments
@@ -101,3 +106,4 @@ if __name__ == '__main__':
     check_args(args)
 
     ranked_search_engine_test(args)
+    # simple_search_engine_test(args)

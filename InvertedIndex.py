@@ -1,33 +1,12 @@
 from pydoc import plain
 from Document import Document
+from BaseInvertedIndex import BaseInvertedIndex
 
 
-class InvertedIndex():
+class InvertedIndex(BaseInvertedIndex):
     def __init__(self):
         # term -> [docID]
         self.index = {}
-
-    def __getitem__(self, term: str):
-        if term in self.index:
-            return self.index[term]
-        else:
-            return []
-
-    def __setitem__(self, term: str, docID: int):
-        """
-        Add a document to the index for a term.
-        Duplicate doc_id's are not counted.
-        """
-        if term in self.index and self.index[term][-1] != docID:
-            self.index[term].append(docID)
-        else:
-            self.index[term] = [docID]
-
-    def __len__(self):
-        return len(self.index)
-
-    def __str__(self):
-        return str(self.index)
 
     def build_index(self, docID: int, tokens: list[str]):
         for term in tokens:
