@@ -29,20 +29,7 @@ def check_args(args):
     exit(1)
 
 
-if __name__ == '__main__':
-    # parse command line arguments
-    parser = argparse.ArgumentParser(
-        description="Search Engine for a given set of documents",
-        usage="python3 main.py -dir < directory-name > -q < query > -o < operator >")
-    parser.add_argument("-dir", "--directory", type=str,
-                        required=False, default="corpus",)
-    parser.add_argument("-q", "--query", type=str, required=True,)
-    parser.add_argument("-o", "--operator", type=str,
-                        required=False, default="AND", choices=["AND", "OR", "N_OF_M"],)
-
-    args = parser.parse_args()
-    check_args(args)
-
+def simple_search_engine_test(args):
     # initialize objects
     index = InvertedIndex()
     normalizer = Normalizer()
@@ -84,3 +71,33 @@ if __name__ == '__main__':
     else:
         file_names = search_engine.get_doc_names(results, active_documents)
         print("Matches:", file_names)
+
+
+def ranked_search_engine_test(args):
+    # initialize objects
+    index = InvertedIndex()
+    normalizer = Normalizer()
+    search_engine = SearchEngine(index)
+    compressor = Compressor()
+
+    # initialize variables
+    active_documents = read_files_in_dir(args.directory)
+    query = args.query
+    operator = args.operator
+
+
+if __name__ == '__main__':
+    # parse command line arguments
+    parser = argparse.ArgumentParser(
+        description="Search Engine for a given set of documents",
+        usage="python3 main.py -dir < directory-name > -q < query > -o < operator >")
+    parser.add_argument("-dir", "--directory", type=str,
+                        required=False, default="corpus",)
+    parser.add_argument("-q", "--query", type=str, required=True,)
+    parser.add_argument("-o", "--operator", type=str,
+                        required=False, default="AND", choices=["AND", "OR", "N_OF_M"],)
+
+    args = parser.parse_args()
+    check_args(args)
+
+    ranked_search_engine_test(args)
