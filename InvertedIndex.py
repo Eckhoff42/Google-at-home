@@ -25,7 +25,6 @@ class InvertedIndex(BaseInvertedIndex):
 
         merged = []
         while current_a < len(term_a) and current_b < len(term_b):
-            print(term_a[current_a], term_b[current_b])
             if term_a[current_a] == term_b[current_b]:
                 merged.append(term_a[current_a])
                 current_a += 1
@@ -36,6 +35,11 @@ class InvertedIndex(BaseInvertedIndex):
             else:
                 merged.append(term_b[current_b])
                 current_b += 1
+
+        if current_a < len(term_a):
+            merged.extend(term_a[current_a:])
+        elif current_b < len(term_b):
+            merged.extend(term_b[current_b:])
         return merged
 
     def merge_and(self, term_a: list[int], term_b: list[int]) -> list[int]:

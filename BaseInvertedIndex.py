@@ -26,7 +26,10 @@ class BaseInvertedIndex():
         return len(self.index)
 
     def __str__(self):
-        return str(self.index)
+        ret = ""
+        for term in self.index:
+            ret += f"{term}: {self.index[term]}\n"
+        return ret
 
     @abstractmethod
     def build_index(self, docID: int, tokens: list[str]):

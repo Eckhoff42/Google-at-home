@@ -6,7 +6,9 @@ from Compressor import Compressor
 from Normalizer import Normalizer
 from Document import Document
 from InvertedIndex import InvertedIndex
+from Ranker import Ranker
 from SearchEngine import SearchEngine
+from countedInvertedIndex import CountedInvertedIndex
 
 
 def read_files_in_dir(dir_name: str) -> list[str]:
@@ -49,6 +51,7 @@ def simple_search_engine_test(args):
         # stemmed_tokens = normalizer.stem(normalized_tokens)
         index.build_index(document.doc_id, normalized_tokens)
 
+    print(index)
     print("compressing index...")
     size_before = len(index)
     compressor.compress_inverted_index_stop_words(index)
@@ -75,10 +78,11 @@ def simple_search_engine_test(args):
 
 def ranked_search_engine_test(args):
     # initialize objects
-    index = InvertedIndex()
+    index = CountedInvertedIndex()
     normalizer = Normalizer()
     search_engine = SearchEngine(index)
     compressor = Compressor()
+    ranker = Ranker()
 
     # initialize variables
     active_documents = read_files_in_dir(args.directory)
@@ -86,9 +90,18 @@ def ranked_search_engine_test(args):
     operator = args.operator
 
     print(f"Building index of {len(active_documents)} documents...")
+    print("Normalizing terms for space efficiency...")
+
     for document in active_documents:
         normalized_tokens = normalizer.normalize(document.get_tokens())
-        index.build_multiplicity_index(document.doc_id, normalized_tokens)
+        index.build_index(document.doc_id, normalized_tokens)
+
+    query = "ligger og"
+    q = query.split()
+    mgr = index.merge_and(index[q[0]], index[q[1]])
+    print(mgr)
+    for pair in mgr:
+        print(ranker.calculate_log_frequency(pair))
 
 
 if __name__ == '__main__':
@@ -105,5 +118,5 @@ if __name__ == '__main__':
     args = parser.parse_args()
     check_args(args)
 
-    ranked_search_engine_test(args)
     # simple_search_engine_test(args)
+    ranked_search_engine_test(args)
