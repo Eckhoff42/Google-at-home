@@ -20,6 +20,11 @@ The selection of algorithms are inspired from the Stanford course [Introduction 
   - [Ranker](#ranker)
     - [Query evaluation](#query-evaluation)
 
+## Structure
+
+![image](https://user-images.githubusercontent.com/42439472/201487558-6476ee53-3823-4ed9-9203-ff71065b7d96.png)
+
+
 ## How to run
 Leave the files you want to index in the `corpus/` directory. currently only .txt files are indexed. There are currently some demo files in the directory.
 
