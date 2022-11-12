@@ -1,6 +1,6 @@
 # Search-engine-algorithm-collection
-A collection of algorithms used in search engines implemented by myself. 
-The selection of algorithms are inspired from the Standford course [Introduction to Information Retrieval](https://web.stanford.edu/class/cs276/)
+A collection of algorithms used in search engines implemented by myself. The intention of this project is not to implement the most effective algorithms, but to implement a variety of techniques.
+The selection of algorithms are inspired from the Stanford course [Introduction to Information Retrieval](https://web.stanford.edu/class/cs276/)
 ## Table of contents
 - [Search-engine-algorithm-collection](#search-engine-algorithm-collection)
   - [Table of contents](#table-of-contents)
@@ -80,4 +80,8 @@ after parsing the query normalizing and stemming the terms it looks for document
 after parsing the query normalizing and stemming the terms it looks for documents where at least a specified percentage of the words are present. A `query` consisting of 4 terms and a `match_percentage` of 50% means any document containing at least 2 search terms is a match.
 
 ## Ranker
-TODO
+Executing a query using the search engine will return a list of documents that matches the query. The ranker takes this list and ranks the documents based on how relevant they are to the query. The ranker is implemented in the `Ranker.py` file. The relevance of a document `d` for a given term `t` is decided by the term frequency (`tf`).
+- $tf(w_{t,d}) = 1 + log_{10}(t,d)$ iff $tf_{t,d} > 0$
+- $tf(w_{t,d}) = 0$                 iff $tf_{t,d} > 0$
+
+The more occurrences of a term in a document the more relevant the document is. Further more we wish to give common terms a lower weight and uncommon terms a high weight. This is done by using the inverse document frequency (`idf`).
