@@ -31,8 +31,9 @@ The current operators are:
 - AND
 - OR
 - N_OF_M
+- RANKING
 
-the output of the query is a list if file-names including the matches. 
+the output of the query is a list of file-names.
 
 ## Inverted index
 Inverted index functionality is created in the `InvertedIndex.py` file. A collection of documents is parsed and posting lists are created. Each list consisting of the term and an ordered list of document_ids containing the term. If a term occurs multiple times in a document there is still only one element in the posting list.

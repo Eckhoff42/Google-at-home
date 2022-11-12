@@ -111,7 +111,6 @@ def ranked_search_engine_test(args):
 
 
 if __name__ == '__main__':
-    # parse command line arguments
     parser = argparse.ArgumentParser(
         description="Search Engine for a given set of documents",
         usage="python3 main.py -dir < directory-name > -q < query > -o < operator >")
@@ -121,6 +120,7 @@ if __name__ == '__main__':
     parser.add_argument("-o", "--operator", type=str,
                         required=False, default="AND", choices=["AND", "OR", "N_OF_M", "RANKING"],)
 
+    # parse command line arguments
     args = parser.parse_args()
     check_args(args)
 
