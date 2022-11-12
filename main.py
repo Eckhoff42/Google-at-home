@@ -81,9 +81,9 @@ def ranked_search_engine_test(args):
     # initialize objects
     index = CountedInvertedIndex()
     normalizer = Normalizer()
-    search_engine = SearchEngine(index)
-    compressor = Compressor()
     ranker = Ranker(index)
+    search_engine = SearchEngine(index, ranker)
+    compressor = Compressor()
 
     # initialize variables
     active_documents = read_files_in_dir(args.directory)
@@ -95,26 +95,19 @@ def ranked_search_engine_test(args):
     for document in active_documents:
         normalized_tokens = normalizer.normalize(document.get_tokens())
         index.build_index(document.doc_id, normalized_tokens)
-    print(index)
 
     print("Normalizing query...")
     normalized_query = normalizer.normalize(query.split())
     print("Executing query...")
-    matches = search_engine.search(normalized_query, operator=operator)
-    matches = [match[0] for match in matches]
-
-    print("Eanking documents...")
-    ranked_documents = ranker.rank_documents_query(matches, normalized_query)
-
-    print("~Results~")
-    print(ranked_documents)
+    ranked_documents = search_engine.rank_search(
+        normalized_query, active_documents)
 
     results = [ranked_document[0] for ranked_document in ranked_documents]
     if (len(results) == 0):
         print("No results found")
     else:
         file_names = search_engine.get_doc_names(results, active_documents)
-        print("Matches:", file_names)
+        print("~Matches (most relevant first)~\n", file_names)
 
 
 if __name__ == '__main__':
@@ -126,10 +119,12 @@ if __name__ == '__main__':
                         required=False, default="corpus",)
     parser.add_argument("-q", "--query", type=str, required=True,)
     parser.add_argument("-o", "--operator", type=str,
-                        required=False, default="AND", choices=["AND", "OR", "N_OF_M"],)
+                        required=False, default="AND", choices=["AND", "OR", "N_OF_M", "RANKING"],)
 
     args = parser.parse_args()
     check_args(args)
 
-    # simple_search_engine_test(args)
-    ranked_search_engine_test(args)
+    if (args.operator == "RANKING"):
+        ranked_search_engine_test(args)
+    else:
+        simple_search_engine_test(args)

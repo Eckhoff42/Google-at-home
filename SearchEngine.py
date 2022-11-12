@@ -8,8 +8,9 @@ from Ranker import Ranker
 
 class SearchEngine():
 
-    def __init__(self, invertedIndex: InvertedIndex) -> None:
+    def __init__(self, invertedIndex: InvertedIndex, ranker: Ranker = None) -> None:
         self.invertedIndex = invertedIndex
+        self.ranker = ranker
 
     def search(self, query: list[str], operator: str = "AND") -> list[int]:
         """
@@ -107,3 +108,21 @@ class SearchEngine():
             doc_names.append(doc_list[doc_id].fileName)
 
         return doc_names
+
+    def rank_search(self, query: list[str], documents, k: int = 10) -> list[int]:
+        """
+        Rank documents based on a query. Return the top k documents.
+        """
+        if self.ranker == None:
+            raise Exception("Cannot perform ranked search without a ranker.")
+
+        scores = {}
+        for document in documents:
+            score = self.ranker.rank_document_query(document.doc_id, query)
+            if score > 0:
+                scores[document.doc_id] = score
+
+        # sort scores ascending by value
+        sorted_scores = sorted(
+            scores.items(), key=lambda x: x[1], reverse=True)
+        return sorted_scores[:k]
