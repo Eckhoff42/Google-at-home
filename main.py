@@ -67,7 +67,7 @@ def simple_search_engine_test(args):
         results = search_engine.search(normalized_query, operator=operator)
     elif (operator == "N_OF_M"):
         results = search_engine.search_n_of_m(
-            query, match_percentage=0.5)
+            normalized_query, match_percentage=50)
 
     # show results
     if (len(results) == 0):

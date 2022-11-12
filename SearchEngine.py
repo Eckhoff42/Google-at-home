@@ -1,8 +1,6 @@
 
-from Compressor import Compressor
 from Document import Document
 from InvertedIndex import InvertedIndex
-from Normalizer import Normalizer
 from Ranker import Ranker
 
 
@@ -19,8 +17,6 @@ class SearchEngine():
 
         match_list = []
         for term in query:
-            # term = Normalizer.normalize_term(self, term)
-            # term = Normalizer.stem_term(self, term)
             if term in self.invertedIndex.index.keys():
                 if len(match_list) == 0:
                     match_list = self.invertedIndex[term]
@@ -61,26 +57,27 @@ class SearchEngine():
         count = 0
         for cursor_index in range(len(cursors)):
             list_index, internal_index = cursors[cursor_index]
+            print("list index: ", list_index,
+                  "internal index: ", internal_index)
+            print("posting list: ", posting_lists[list_index])
             if posting_lists[list_index][internal_index] == doc_id:
                 count += 1
 
         return count
 
-    def search_n_of_m(self, query: str, match_percentage: int) -> list[int]:
+    def search_n_of_m(self, query: list[str], match_percentage: int) -> list[int]:
         """
         Returns a list of document IDs where at least `match_percentage`% of the terms are included.
         """
 
-        m = len(query.split())
+        m = len(query)
         n = max(1, min(m, (m * (match_percentage / 100))))
         posting_lists = []
         cursors = []
         match_list = []
 
         # initialize posting lists and cursors
-        for term in query.split():
-            term = Normalizer.normalize_term(self, term)
-            term = Normalizer.stem_term(self, term)
+        for term in query:
             if term in self.invertedIndex.index.keys():
                 posting_lists.append(self.invertedIndex[term])
                 cursors.append((len(posting_lists)-1, 0))
@@ -88,6 +85,7 @@ class SearchEngine():
         # document at a time traversal
         current_doc = self.__next_document(posting_lists, cursors)
         while current_doc != None:
+            print("current doc: ", current_doc)
             nr_of_hits = self.__count_occurrences(
                 posting_lists, cursors, current_doc)
 
