@@ -59,13 +59,62 @@ Compressing the inverted index has multiple benefits. A smaller index uses less 
 The compressor removes stop words eg. "the, and, in, to, one" that are common but bears little meaning in isolation. One side effect of this is removing false positives in query evaluation where "The quick fox" would include all documents including the term "the".
 
 ### Gap encoding
-TODO
+A compression technique used to reduce the size of the inverted index. The idea is to store the difference between two following document_ids in the posting list instead of the actual document_id. Decoding a document_id is done by adding the values of all previous elements in the gap encoded list
+
+**Before**
+```
+"secondTerm" -> 11, 12
+"firstTerm" -> 1, 2, 3, 8, 11
+```
+**After**
+```
+"secondTerm" -> 11,1
+"firstTerm" -> 1,1,1,5,3
+# decoding this -----^
+# is done by 1+1+1+5 = 8
+```
+
+
 
 ### Variable byte encoding
-TODO
+A compression technique used to allow a buffer to contain numbers of different sizes. In our case the smallest unit is 1 byte (8bit).
+The first bit of each byte is used to signify if the byte is the last byte in the sequence. The remaining 7 bits are used to store the value of the number. 
+
+**encoding a number**
+```
+1. transform the number into binary
+  - 480 = 1101001011
+2. split the binary into 7 bit chunks
+  - 110 1001011
+3. add trailing zeros to the first byte
+  - 0000110 1001011
+4. add a 0 to the first bit all but the last byte with a 1
+  - 00000110 11001011
+```
+**decoding a byte string**
+```
+byteString = 00000110 11001011 10001010
+1. read bytes until the first byte with a 1 in the first bit is found
+  - 00000110 11001011
+2. remove the first bit from all bytes
+  - 0000110 1001011
+3. remove trailing zeros from the first byte
+  - 1101001011
+```
 
 ### Gamma encoding
-TODO
+A compression technique used to allow a buffer to contain numbers of different sizes. A gamma encoded number is represented as a combination of offset and length.
+- offset: the number in binary with the leading 1 cut off
+- length: the length of the offset in unary
+
+**encoding a number**
+```
+1. create offset and length
+  - offset: 13 -> 1101 -> 101
+  - length: 3 -> 1110
+2. create gamma encoded number
+  - 1110101
+```
 
 ## Search engine
 The search engine given a `query` evaluates the string and finds matching documents. What documents are matching depends on how the query is evaluated and multiple search-functions are given.
@@ -80,8 +129,17 @@ after parsing the query normalizing and stemming the terms it looks for document
 after parsing the query normalizing and stemming the terms it looks for documents where at least a specified percentage of the words are present. A `query` consisting of 4 terms and a `match_percentage` of 50% means any document containing at least 2 search terms is a match.
 
 ## Ranker
-Executing a query using the search engine will return a list of documents that matches the query. The ranker takes this list and ranks the documents based on how relevant they are to the query. The ranker is implemented in the `Ranker.py` file. The relevance of a document `d` for a given term `t` is decided by the term frequency (`tf`).
-- $tf(w_{t,d}) = 1 + log_{10}(t,d)$ iff $tf_{t,d} > 0$
-- $tf(w_{t,d}) = 0$                 iff $tf_{t,d} > 0$
+Executing a query using the search engine will return a list of documents that matches the query. The ranker takes this list and ranks the documents based on how relevant they are to the query. The ranker is implemented in the `Ranker.py` file. The relevance of a document `d` for a given term `t` is decided by the log of term frequency (`tf`).
+- $w_{t,d} = 1 + log_{10}(t,d)$ iff $tf_{t,d} > 0$
+- $w_{t,d} = 0$                 iff $tf_{t,d} > 0$
 
-The more occurrences of a term in a document the more relevant the document is. Further more we wish to give common terms a lower weight and uncommon terms a high weight. This is done by using the inverse document frequency (`idf`).
+The more occurrences of a term in a document the more relevant the document is. Further more we wish to give common terms a lower weight and uncommon terms a high weight. This is done by weighting the term frequency with the inverse document frequency (`idf`).
+- $idf_{t} = log_{10}\frac{N}{df_{t}}$
+- document frequency (`df`) is the number of documents containing the term
+- N is the total number of documents
+
+The weight of a term `t` for a document `d` is then
+- $w_{t,d} = log_{10}(1+ tf_{t,d}) * log_{10}\frac{N}{df_{t}}$
+
+Scoring a document `d` for a query `q` is done by summing the weights of all terms in the query for the document.
+- $score_{d,q} = \sum_{t \in q} w_{t,d}$
