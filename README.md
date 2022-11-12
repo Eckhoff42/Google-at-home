@@ -18,6 +18,7 @@ The selection of algorithms are inspired from the Stanford course [Introduction 
     - [Search(operator = "AND"):](#searchoperator--and-1)
     - [Search_n_of_m():](#search_n_of_m)
   - [Ranker](#ranker)
+    - [Query evaluation](#query-evaluation)
 
 ## How to run
 Leave the files you want to index in the `corpus/` directory. currently only .txt files are indexed. There are currently some demo files in the directory.
@@ -143,3 +144,6 @@ The weight of a term `t` for a document `d` is then
 
 Scoring a document `d` for a query `q` is done by summing the weights of all terms in the query for the document.
 - $score_{d,q} = \sum_{t \in q} w_{t,d}$
+
+### Query evaluation
+One naive solution of evaluating a query is to calculate the score for each document and return the documents with the highest score. This is however not optimal as it requires calculating the score for all documents. A better solution is to only calculate the score for documents that matches the query. This is done by using the inverted index to find documents that matches the query. The documents are then ranked by calculating the score for each document. Other techniques can be used to reduce the number of documents that needs to be ranked, but they are not implemented in this project (yet). 
