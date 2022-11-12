@@ -20,11 +20,13 @@ class Ranker():
     def rank_document_query(self, documentId: int, query: list[str]) -> float:
         """
         Rank a document based on a query
+        The ranking is based on term frequency weighted by the inverse document frequency
         """
         score = 0
         for term in query:
             tf = self.counted_inverted_index.get_tf(documentId, term)
-            score += self.calculate_log_frequency(tf)
+            idf = self.counted_inverted_index.get_idf(term)
+            score += math.log(1 + tf, 10) * idf
         return score
 
     def rank_documents_query(self, documents: list[int], query: list[str]) -> list[Document]:

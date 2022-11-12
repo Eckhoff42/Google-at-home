@@ -95,7 +95,6 @@ def ranked_search_engine_test(args):
     for document in active_documents:
         normalized_tokens = normalizer.normalize(document.get_tokens())
         index.build_index(document.doc_id, normalized_tokens)
-
     print(index)
 
     print("Normalizing query...")
@@ -109,6 +108,13 @@ def ranked_search_engine_test(args):
 
     print("~Results~")
     print(ranked_documents)
+
+    results = [ranked_document[0] for ranked_document in ranked_documents]
+    if (len(results) == 0):
+        print("No results found")
+    else:
+        file_names = search_engine.get_doc_names(results, active_documents)
+        print("Matches:", file_names)
 
 
 if __name__ == '__main__':

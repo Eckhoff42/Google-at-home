@@ -1,3 +1,4 @@
+import math
 from pydoc import plain
 from Document import Document
 from BaseInvertedIndex import BaseInvertedIndex
@@ -91,6 +92,15 @@ class CountedInvertedIndex(BaseInvertedIndex):
 
         return merged
 
+    def _total_terms(self) -> int:
+        """Get the total number of terms in the collection"""
+        total_terms = 0
+        for document in self.document_frequency:
+            for term in self.document_frequency[document]:
+                total_terms += self.document_frequency[document][term]
+
+        return total_terms
+
     def get_tf(self, document_id: int, term: str) -> int:
         """Get the term frequency of a term"""
         if term in self.term_frequency[document_id]:
@@ -102,5 +112,12 @@ class CountedInvertedIndex(BaseInvertedIndex):
         """Get the document frequency of a term"""
         if term in self.document_frequency:
             return self.document_frequency[term]
+        else:
+            return 0
+
+    def get_idf(self, term) -> int:
+        """Get the inverse document frequency of a term"""
+        if term in self.document_frequency:
+            return math.log((len(self.term_frequency) / self.get_df(term)), 10)
         else:
             return 0
