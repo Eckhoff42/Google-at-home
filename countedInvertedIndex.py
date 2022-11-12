@@ -10,20 +10,15 @@ class CountedInvertedIndex(BaseInvertedIndex):
         self.term_frequency = {}
         self.document_frequency = {}
 
-    def build_term_frequency(self):
-        for term in self.index:
-            for _, count in self.index[term]:
-                if term not in self.term_frequency:
-                    self.term_frequency[term] = count
-                else:
-                    self.term_frequency[term] += count
-
     def build_document_frequency(self):
         for term in self.index:
             self.document_frequency[term] = len(self.index[term])
 
     def build_index(self, docID: int, tokens: list[str]):
+        doc_counted = False
+        self.term_frequency[docID] = {}
         for term in tokens:
+            # first time we see the term
             if term not in self.index:
                 self.index[term] = []
                 self.index[term].append([docID, 1])
@@ -32,8 +27,19 @@ class CountedInvertedIndex(BaseInvertedIndex):
             else:
                 self.index[term][-1][1] += 1
 
-        self.build_term_frequency()
+            # update term frequency
+            if term not in self.term_frequency[docID]:
+                self.term_frequency[docID][term] = 1
+            else:
+                self.term_frequency[docID][term] += 1
+
         self.build_document_frequency()
+
+    # def get_term_frequency(self) -> int:
+    #     return self.term_frequency
+
+    # def get_document_frequency(self) -> int:
+    #     return self.document_frequency
 
     def merge_and(self, term_a: list[list[int, int]], term_b: list[list[int, int]]) -> list[list[int, int]]:
         """
@@ -84,3 +90,17 @@ class CountedInvertedIndex(BaseInvertedIndex):
             merged.extend(term_b[current_b:])
 
         return merged
+
+    def get_tf(self, document_id: int, term: str) -> int:
+        """Get the term frequency of a term"""
+        if term in self.term_frequency[document_id]:
+            return self.term_frequency[document_id][term]
+        else:
+            return 0
+
+    def get_df(self, term: str) -> int:
+        """Get the document frequency of a term"""
+        if term in self.document_frequency:
+            return self.document_frequency[term]
+        else:
+            return 0

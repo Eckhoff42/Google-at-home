@@ -61,9 +61,10 @@ def simple_search_engine_test(args):
 
     print(f"Searching with operator {operator}...")
     query = compressor.remove_stop_words(query)
+    normalized_query = normalizer.normalize(query.split())
     results = []
     if (operator in ["AND", "OR"]):
-        results = search_engine.search(query, operator=operator)
+        results = search_engine.search(normalized_query, operator=operator)
     elif (operator == "N_OF_M"):
         results = search_engine.search_n_of_m(
             query, match_percentage=0.5)
@@ -82,7 +83,7 @@ def ranked_search_engine_test(args):
     normalizer = Normalizer()
     search_engine = SearchEngine(index)
     compressor = Compressor()
-    ranker = Ranker()
+    ranker = Ranker(index)
 
     # initialize variables
     active_documents = read_files_in_dir(args.directory)
@@ -91,17 +92,23 @@ def ranked_search_engine_test(args):
 
     print(f"Building index of {len(active_documents)} documents...")
     print("Normalizing terms for space efficiency...")
-
     for document in active_documents:
         normalized_tokens = normalizer.normalize(document.get_tokens())
         index.build_index(document.doc_id, normalized_tokens)
 
-    query = "ligger og"
-    q = query.split()
-    mgr = index.merge_and(index[q[0]], index[q[1]])
-    print(mgr)
-    for pair in mgr:
-        print(ranker.calculate_log_frequency(pair))
+    print(index)
+
+    print("Normalizing query...")
+    normalized_query = normalizer.normalize(query.split())
+    print("Executing query...")
+    matches = search_engine.search(normalized_query, operator=operator)
+    matches = [match[0] for match in matches]
+
+    print("Eanking documents...")
+    ranked_documents = ranker.rank_documents_query(matches, normalized_query)
+
+    print("~Results~")
+    print(ranked_documents)
 
 
 if __name__ == '__main__':

@@ -3,6 +3,7 @@ from Compressor import Compressor
 from Document import Document
 from InvertedIndex import InvertedIndex
 from Normalizer import Normalizer
+from Ranker import Ranker
 
 
 class SearchEngine():
@@ -10,15 +11,15 @@ class SearchEngine():
     def __init__(self, invertedIndex: InvertedIndex) -> None:
         self.invertedIndex = invertedIndex
 
-    def search(self, query: str, operator: str = "AND") -> list[int]:
+    def search(self, query: list[str], operator: str = "AND") -> list[int]:
         """
         Returns a list of document IDs that matches the query.
         """
 
         match_list = []
-        for term in query.split():
-            term = Normalizer.normalize_term(self, term)
-            term = Normalizer.stem_term(self, term)
+        for term in query:
+            # term = Normalizer.normalize_term(self, term)
+            # term = Normalizer.stem_term(self, term)
             if term in self.invertedIndex.index.keys():
                 if len(match_list) == 0:
                     match_list = self.invertedIndex[term]
