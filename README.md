@@ -1,6 +1,6 @@
 # Search-engine-algorithm-collection
 A collection of algorithms used in search engines implemented by myself. 
-
+The selection of algorithms are inspired from the Standford course [Introduction to Information Retrieval](https://web.stanford.edu/class/cs276/)
 ## Table of contents
 - [Search-engine-algorithm-collection](#search-engine-algorithm-collection)
   - [Table of contents](#table-of-contents)
