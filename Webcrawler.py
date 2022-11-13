@@ -52,7 +52,7 @@ class Webcrawler():
                     self.robot_files[root_url][0] = True
                     return True
             except Exception as e:
-                print(f"could not crawl url: {url} | {e}")
+                # print(f"could not crawl url: {url} | {e}")
                 return False
 
     def read_robots(self, root_url: str, response) -> bool:
@@ -76,7 +76,7 @@ class Webcrawler():
     def crawl_url(self, url: str):
         # read robots.txt
         if not self.robots_allowed(url):
-            print(f"{url} does not allow robots")
+            # print(f"{url} does not allow robots")
             return
 
         try:
@@ -84,7 +84,8 @@ class Webcrawler():
             if response.getcode() == 200:
                 self.parse_content(url, response.read())
         except Exception as e:
-            print(f"could not crawl robot url: {url} | {e}")
+            pass
+            # print(f"could not crawl robot url: {url} | {e}")
 
     def save_to_file(self, url: str, soup: BeautifulSoup):
         # create temp directory if not exists
@@ -143,10 +144,8 @@ class Webcrawler():
             url = self.next_url()
             if url is None:
                 break
-            print(f"visiting {url}")
+            print(f"crawling {url}")
             self.crawl_url(url)
-
-        self.close_file()
 
 
 def init_argparser():
