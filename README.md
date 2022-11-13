@@ -183,6 +183,8 @@ One naive solution of evaluating a query is to calculate the score for each docu
 ## Web crawler
 A web crawler commonly referred to as spiders is a program used to index the internet. It reads the content of a website and extracts links to other websites. The crawler then visits the linked websites and repeats the process. The crawler is implemented in the `Crawler.py` file. The crawler is implemented using the `requests` library to fetch the content of a website and the `BeautifulSoup` library to parse the content. 
 
+![image](https://user-images.githubusercontent.com/42439472/201518967-c091e1a9-d255-4c63-a077-64dfa8c503f3.png)
+
 ### The standard process
 1. Get an url from the queue
 2. Register the url as visited
