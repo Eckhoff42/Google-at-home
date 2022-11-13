@@ -53,7 +53,7 @@ class Webcrawler():
                     self.robot_files[root_url][0] = True
                     return True
             except Exception as e:
-                print(f"could not crawl url: {url} | {e.code}")
+                print(f"could not crawl url: {url} | {e}")
                 return False
 
     def read_robots(self, root_url: str, response) -> bool:
@@ -85,13 +85,27 @@ class Webcrawler():
             if response.getcode() == 200:
                 self.parse_content(url, response.read())
         except Exception as e:
-            print(f"could not crawl robot url: {url} | {e.code}")
+            print(f"could not crawl robot url: {url} | {e}")
 
     def save(self, url: str, text: list[str]):
-        # self.file.write(f"{url}:{{\n")
+        self.file.write(f"{url}:{{\n")
         for line in text:
             self.file.write(f"{line.text}\n")
-        # self.file.write(f"}},\n")
+        self.file.write(f"}},\n")
+
+    def save_to_file(self, url: str, soup: BeautifulSoup):
+        shortened = re.sub(r"(https?://)", "", url)
+        shortened = re.sub(r"/", "_", shortened)
+        file_name = "temp/" + shortened
+
+        # create file and write to it
+        file = open(file_name, 'w')
+
+        # find h1 h2 h3 and p tags in order
+        for tag in soup.find_all(['h1', 'h2', 'h3', 'p']):
+            file.write(f"{tag.text}\n")
+
+        file.close()
 
     def close_file(self):
         self.file.close()
@@ -101,7 +115,7 @@ class Webcrawler():
         heading = soup.find_all('h1')
 
         if heading:
-            self.save(url, heading)
+            self.save_to_file(url, soup)
 
         for link in soup.find_all('a'):
             normalized_url = self.normalize_url(link.get('href'))
@@ -110,6 +124,8 @@ class Webcrawler():
 
     def normalize_url(self, url: str):
         if url is not None and url.startswith("http"):
+            if url.endswith(".pdf") or url.endswith(".jpg") or url.endswith(".png"):
+                return None
             return url
 
     def crawl(self, start_url: str, max_pages: int):
