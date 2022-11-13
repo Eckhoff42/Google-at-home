@@ -1,3 +1,4 @@
+import argparse
 from urllib import request
 from bs4 import BeautifulSoup
 import urllib.robotparser
@@ -90,10 +91,10 @@ class Webcrawler():
             print(f"could not crawl robot url: {url} | {e.code}")
 
     def save(self, url: str, text: list[str]):
-        self.file.write(f"{url}:{{\n")
+        # self.file.write(f"{url}:{{\n")
         for line in text:
-            self.file.write(f"{line.text},\n")
-        self.file.write(f"}},\n")
+            self.file.write(f"{line.text}\n")
+        # self.file.write(f"}},\n")
 
     def close_file(self):
         self.file.close()
@@ -123,10 +124,27 @@ class Webcrawler():
             print(f"visiting {url}")
             self.crawl_url(url)
 
+        print(f"writing data to file '{self.file_name}'")
         self.close_file()
 
 
-if __name__ == '__main__':
-    spider = Webcrawler('data.txt')
+def init_argparser():
+    parser = argparse.ArgumentParser(
+        description='Crawl a website and save the headings to a file',
+        usage='python Webcrawler.py [url] [max_pages] [file_name]'
+    )
+    parser.add_argument('-u', '--url', type=str,
+                        help='the url to start crawling from')
+    parser.add_argument("-p", '--max_pages', type=int,
+                        help='the maximum number of pages to crawl')
+    parser.add_argument('-f', '--file_name', type=str,
+                        help='the name of the file to save the headings to')
 
-    spider.crawl('https://no.wikipedia.org/wiki/Norge', 10)
+    return parser.parse_args()
+
+
+if __name__ == '__main__':
+    args = init_argparser()
+
+    spider = Webcrawler(args.file_name)
+    spider.crawl(args.url, args.max_pages)
