@@ -8,9 +8,8 @@ class Webcrawler():
     def __init__(self, file_name: str, queue_size: int = 1000):
         self.file_name = file_name
         self.queue_size = queue_size
-        self.queue = []
-        self.visited = {}
-        self.added = {}
+        self.queue = set()
+        self.visited = set()
         self.file = open(self.file_name, 'w')
 
         # [root_url] = (allowed, [disallowed subpaths])
@@ -18,14 +17,13 @@ class Webcrawler():
 
     def add_url(self, url: str):
         if len(self.queue) < self.queue_size:
-            if url not in self.visited and url not in self.added:
-                self.queue.append(url)
-                self.added[url] = True
+            if url not in self.visited:
+                self.queue.add(url)
 
     def next_url(self) -> str:
         if len(self.queue) > 0:
-            next_url = self.queue.pop(0)
-            self.visited[next_url] = True
+            next_url = self.queue.pop()
+            self.visited.add(next_url)
             return next_url
         return None
 

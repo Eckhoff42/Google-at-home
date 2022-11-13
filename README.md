@@ -164,6 +164,8 @@ A web crawler commonly referred to as spiders is a program used to index the int
 1. Get an url from the queue
 2. Register the url as visited
 3. Check the robots.txt file to see if the url is allowed to be crawled
+   1. first check if the robots.txt is cashed 
+   2. if not get the url/robots.txt and parse it
 4. Fetch the content of a website
    1. Save the specified to a file
    2. Add all links to the queue if they are not already in the queue
