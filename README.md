@@ -2,7 +2,7 @@
 A collection of algorithms used in search engines implemented by myself. The intention of this project is not to implement the most effective algorithms, but to implement a variety of techniques. 
 The selection of algorithms are inspired from the Stanford course [Introduction to Information Retrieval](https://web.stanford.edu/class/cs276/)
 
-![image](https://user-images.githubusercontent.com/42439472/201530265-8410a7f0-982d-442d-bf7f-bddc82345299.png)
+![image](https://user-images.githubusercontent.com/42439472/201530727-5321ecd9-fd71-4c71-aedb-06ab77105cf5.png)
 
 ## Table of contents
 - [Search-engine-algorithm-collection](#search-engine-algorithm-collection)
@@ -30,7 +30,7 @@ The selection of algorithms are inspired from the Stanford course [Introduction 
 
 ## Structure
 
-![image](https://user-images.githubusercontent.com/42439472/201487558-6476ee53-3823-4ed9-9203-ff71065b7d96.png)
+![image](https://user-images.githubusercontent.com/42439472/201530600-3707c11a-c678-435c-9294-adbac1470ea9.png)
 
 ## How to run google at home
 Run google at home with the command:
