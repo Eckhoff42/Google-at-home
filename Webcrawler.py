@@ -1,16 +1,15 @@
 import argparse
+import os
 from urllib import request
 from bs4 import BeautifulSoup
 import re
 
 
 class Webcrawler():
-    def __init__(self, file_name: str, queue_size: int = 1000):
-        self.file_name = file_name
+    def __init__(self, queue_size: int = 1000):
         self.queue_size = queue_size
         self.queue = set()
         self.visited = set()
-        self.file = open(self.file_name, 'w')
 
         # [root_url] = (allowed, [disallowed subpaths])
         self.robot_files = {}
@@ -87,16 +86,14 @@ class Webcrawler():
         except Exception as e:
             print(f"could not crawl robot url: {url} | {e}")
 
-    def save(self, url: str, text: list[str]):
-        self.file.write(f"{url}:{{\n")
-        for line in text:
-            self.file.write(f"{line.text}\n")
-        self.file.write(f"}},\n")
-
     def save_to_file(self, url: str, soup: BeautifulSoup):
+        # create temp directory if not exists
+        if not os.path.exists("temp"):
+            os.makedirs("temp")
+
         shortened = re.sub(r"(https?://)", "", url)
         shortened = re.sub(r"/", "_", shortened)
-        file_name = "temp/" + shortened
+        file_name = "temp/" + shortened + ".txt"
 
         # create file and write to it
         file = open(file_name, 'w')
@@ -106,9 +103,6 @@ class Webcrawler():
             file.write(f"{tag.text}\n")
 
         file.close()
-
-    def close_file(self):
-        self.file.close()
 
     def parse_content(self, url: str, html: str):
         soup = BeautifulSoup(html, 'html.parser')
@@ -123,10 +117,25 @@ class Webcrawler():
                 self.add_url(normalized_url)
 
     def normalize_url(self, url: str):
-        if url is not None and url.startswith("http"):
-            if url.endswith(".pdf") or url.endswith(".jpg") or url.endswith(".png"):
+        allowed_languages = ["en", "no"]
+        ignored_extensions = [".pdf", ".jpg", ".png", ".gif",
+                              ".svg", ".css", ".js", ".ico", ".xml", ".json", ".txt"]
+
+        if url is None:
+            return None
+        if not url.startswith("http"):
+            return None
+        if url.endswith(tuple(ignored_extensions)):
+            return None
+        # remove all wikipedia urls with language not in allowed_languages
+        if re.search(r"(https?://[^/]+\.wikipedia\.org)", url):
+            language = re.search(
+                r"(https?://[^/]+)\.wikipedia\.org", url).group(1)
+            if language not in allowed_languages:
                 return None
             return url
+
+        return url
 
     def crawl(self, start_url: str, max_pages: int):
         self.add_url(start_url)
@@ -137,7 +146,6 @@ class Webcrawler():
             print(f"visiting {url}")
             self.crawl_url(url)
 
-        print(f"writing data to file '{self.file_name}'")
         self.close_file()
 
 
@@ -150,8 +158,6 @@ def init_argparser():
                         help='the url to start crawling from')
     parser.add_argument("-p", '--max_pages', type=int,
                         help='the maximum number of pages to crawl')
-    parser.add_argument('-f', '--file_name', type=str,
-                        help='the name of the file to save the headings to')
 
     return parser.parse_args()
 

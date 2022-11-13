@@ -83,7 +83,6 @@ def ranked_search_engine_test(args):
     normalizer = Normalizer()
     ranker = Ranker(index)
     search_engine = SearchEngine(index, ranker)
-    compressor = Compressor()
 
     # initialize variables
     active_documents = read_files_in_dir(args.directory)

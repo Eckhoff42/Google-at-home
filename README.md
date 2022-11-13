@@ -5,7 +5,9 @@ The selection of algorithms are inspired from the Stanford course [Introduction 
 - [Search-engine-algorithm-collection](#search-engine-algorithm-collection)
   - [Table of contents](#table-of-contents)
   - [Structure](#structure)
-  - [How to run](#how-to-run)
+  - [How to run google at home](#how-to-run-google-at-home)
+  - [How to run search engine](#how-to-run-search-engine)
+  - [How to run the crawler](#how-to-run-the-crawler)
   - [Inverted index](#inverted-index)
   - [Normalizer](#normalizer)
     - [normalizing operations](#normalizing-operations)
@@ -27,8 +29,19 @@ The selection of algorithms are inspired from the Stanford course [Introduction 
 
 ![image](https://user-images.githubusercontent.com/42439472/201487558-6476ee53-3823-4ed9-9203-ff71065b7d96.png)
 
+## How to run google at home
+Run google at home with the command:
+```
+python3 GoogleAtHome.py <query> <seed> <max_pages>
+```
+- query: the query you want to search
+- seed: the url of the seed page
+- max_pages: the maximum number of pages you want to crawl
 
-## How to run
+This will crawl the web starting at \<seed> The text content of the pages will be saved to the `temp` directory. The search engine will then be built on the crawled pages. The results will be printed to the console ranked according to tf-idf.
+
+
+## How to run search engine
 Leave the files you want to index in the `corpus/` directory. currently only .txt files are indexed. There are currently some demo files in the directory.
 
 run the file
@@ -42,6 +55,16 @@ The current operators are:
 - RANKING
 
 the output of the query is a list of file-names.
+
+## How to run the crawler
+The crawler can be run with the command:
+```
+python3 crawler.py <url> <max_pages>
+```
+- seed: the url of the seed page
+- max_pages: the maximum number of pages you want to crawl
+
+this will crawl the web starting at \<seed> The text content of the pages will be saved to the `temp` directory.
 
 ## Inverted index
 Inverted index functionality is created in the `InvertedIndex.py` file. A collection of documents is parsed and posting lists are created. Each list consisting of the term and an ordered list of document_ids containing the term. If a term occurs multiple times in a document there is still only one element in the posting list.
