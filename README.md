@@ -43,6 +43,7 @@ python3 GoogleAtHome.py <query> <seed> <max_pages>
 
 This will crawl the web starting at \<seed> The text content of the pages will be saved to the `temp` directory. The search engine will then be built on the crawled pages. The results will be printed to the console ranked according to tf-idf.
 
+https://user-images.githubusercontent.com/42439472/201532218-26a3460a-fe79-4ceb-abd5-d69fd5628749.mp4
 
 ## How to run search engine
 Leave the files you want to index in the `corpus/` directory. currently only .txt files are indexed. There are currently some demo files in the directory.
