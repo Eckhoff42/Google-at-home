@@ -4,6 +4,7 @@ The selection of algorithms are inspired from the Stanford course [Introduction 
 ## Table of contents
 - [Search-engine-algorithm-collection](#search-engine-algorithm-collection)
   - [Table of contents](#table-of-contents)
+  - [Structure](#structure)
   - [How to run](#how-to-run)
   - [Inverted index](#inverted-index)
   - [Normalizer](#normalizer)
@@ -19,6 +20,8 @@ The selection of algorithms are inspired from the Stanford course [Introduction 
     - [Search_n_of_m():](#search_n_of_m)
   - [Ranker](#ranker)
     - [Query evaluation](#query-evaluation)
+  - [Web crawler](#web-crawler)
+    - [The standard process](#the-standard-process)
 
 ## Structure
 
@@ -153,3 +156,15 @@ Scoring a document `d` for a query `q` is done by summing the weights of all ter
 
 ### Query evaluation
 One naive solution of evaluating a query is to calculate the score for each document and return the documents with the highest score. This is however not optimal as it requires calculating the score for all documents. A better solution is to only calculate the score for documents that matches the query. This is done by using the inverted index to find documents that matches the query. The documents are then ranked by calculating the score for each document. Other techniques can be used to reduce the number of documents that needs to be ranked, but they are not implemented in this project (yet). 
+
+## Web crawler
+A web crawler commonly referred to as spiders is a program used to index the internet. It reads the content of a website and extracts links to other websites. The crawler then visits the linked websites and repeats the process. The crawler is implemented in the `Crawler.py` file. The crawler is implemented using the `requests` library to fetch the content of a website and the `BeautifulSoup` library to parse the content. 
+
+### The standard process
+1. Get an url from the queue
+2. Register the url as visited
+3. Check the robots.txt file to see if the url is allowed to be crawled
+4. Fetch the content of a website
+   1. Save the specified to a file
+   2. Add all links to the queue if they are not already in the queue
+5. Repeat until the n sites have been crawled 

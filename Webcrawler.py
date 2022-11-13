@@ -1,7 +1,6 @@
 import argparse
 from urllib import request
 from bs4 import BeautifulSoup
-import urllib.robotparser
 import re
 
 
