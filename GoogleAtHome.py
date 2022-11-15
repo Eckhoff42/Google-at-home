@@ -18,7 +18,7 @@ def read_files_in_dir(dir_name: str) -> list[str]:
     return documents
 
 
-def ranked_search_engine_test(directory, query, operator):
+def ranked_search_engine_test(directory: str, query: str, operator: str, nr_of_results: int = 10):
     # initialize objects
     index = CountedInvertedIndex()
     normalizer = Normalizer()
@@ -49,6 +49,8 @@ def ranked_search_engine_test(directory, query, operator):
         file_names = search_engine.get_doc_names(results, active_documents)
         print("\n~Matches (most relevant first)~")
         for i, file_name in enumerate(file_names):
+            if i >= nr_of_results:
+                break
             print("[", round(ranked_documents[i][1], 3), "] https://"+file_name.strip("temp/").replace("_",
                   "/").replace(".tx", ""))
 
@@ -75,6 +77,4 @@ if __name__ == "__main__":
     crawler.crawl(args.seed, args.max_pages)
     print("Crawling complete\n")
 
-    ranked_search_engine_test("temp", args.query, "RANKING")
-
-    print("hello world!")
+    ranked_search_engine_test("temp", args.query, "RANKING", 5)
