@@ -8,7 +8,7 @@ from Document import Document
 from InvertedIndex import InvertedIndex
 from Ranker import Ranker
 from SearchEngine import SearchEngine
-from countedInvertedIndex import CountedInvertedIndex
+from CountedInvertedIndex import CountedInvertedIndex
 
 
 def read_files_in_dir(dir_name: str) -> list[str]:

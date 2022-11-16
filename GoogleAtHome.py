@@ -6,10 +6,10 @@ from Normalizer import Normalizer
 from Ranker import Ranker
 from SearchEngine import SearchEngine
 from Webcrawler import Webcrawler
-from countedInvertedIndex import CountedInvertedIndex
+from CountedInvertedIndex import CountedInvertedIndex
 
 
-def read_files_in_dir(dir_name: str) -> list[str]:
+def read_files_in_dir(dir_name: str) -> list[Document]:
     documents = []
     for i, filename in enumerate(os.listdir(dir_name)):
         if filename.endswith(".txt"):
@@ -25,34 +25,55 @@ def ranked_search_engine_test(directory: str, query: str, operator: str, nr_of_r
     ranker = Ranker(index)
     search_engine = SearchEngine(index, ranker)
 
-    # initialize variables
-    active_documents = read_files_in_dir(directory)
-    query = query
-    operator = operator
+    # # initialize variables
+    # active_documents = read_files_in_dir(directory)
+    # for document in active_documents:
+    #     print(document.doc_id)
+    # query = query
+    # operator = operator
 
-    print(f"Building index of {len(active_documents)} documents...")
-    print("Normalizing terms for space efficiency...")
-    for document in active_documents:
-        normalized_tokens = normalizer.normalize(document.get_tokens())
-        index.build_index(document.doc_id, normalized_tokens)
+    # print(f"Building index of {len(active_documents)} documents...")
+    # print("Normalizing terms for space efficiency...")
+    # for document in active_documents:
+    #     normalized_tokens = normalizer.normalize(document.get_tokens())
+    #     index.build_index(document.doc_id, normalized_tokens)
 
+    # original_index = index.index
+    # original_term_frequency = index.term_frequency
+    # original_document_frequency = index.document_frequency
+
+    # print(len(original_index), len(original_term_frequency),
+    #       len(original_document_frequency))
+
+    # index.write_index_to_file("save/index.txt")
+    ind = index.read_index_from_file("save/index.txt")
+    # index.write_document_frequency_to_file("save/df.txt")
+    df = index.read_document_frequency_from_file("save/df.txt")
+    # index.write_term_frequency_to_file("save/tf.txt")
+    tf = index.read_term_frequency_from_file("save/tf.txt")
+    # index.save_document_names("save/doc_names.txt", active_documents)
+    ad = index.read_document_names("save/doc_names.txt")
     print("Normalizing query...")
     normalized_query = normalizer.normalize(query.split())
     print("Executing query...")
-    ranked_documents = search_engine.rank_search(
-        normalized_query, active_documents)
+    print(f"query = {normalized_query}")
+    ranked_documents = search_engine.rank_search_all(
+        normalized_query)
 
+    print(ranked_documents)
     results = [ranked_document[0] for ranked_document in ranked_documents]
+
     if (len(results) == 0):
         print("No results found")
     else:
-        file_names = search_engine.get_doc_names(results, active_documents)
+        file_names = search_engine.get_doc_names(results, ad)
+        print(file_names)
         print("\n~Matches (most relevant first)~")
         for i, file_name in enumerate(file_names):
             if i >= nr_of_results:
                 break
             print("[", round(ranked_documents[i][1], 3), "] https://"+file_name.strip("temp/").replace("_",
-                  "/").replace(".tx", ""))
+                  "/").replace(".txt", ""))
 
 
 def init_argparser():
@@ -73,8 +94,8 @@ def init_argparser():
 if __name__ == "__main__":
     args = init_argparser()
 
-    crawler = Webcrawler()
-    crawler.crawl(args.seed, args.max_pages)
-    print("Crawling complete\n")
+    # crawler = Webcrawler()
+    # crawler.crawl(args.seed, args.max_pages)
+    # print("Crawling complete\n")
 
     ranked_search_engine_test("temp", args.query, "RANKING", 5)

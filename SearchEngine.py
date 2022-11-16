@@ -115,10 +115,31 @@ class SearchEngine():
             raise Exception("Cannot perform ranked search without a ranker.")
 
         scores = {}
+        print("documents are", documents)
         for document in documents:
+            print(document)
             score = self.ranker.rank_document_query(document.doc_id, query)
             if score > 0:
                 scores[document.doc_id] = score
+
+        # sort scores ascending by value
+        sorted_scores = sorted(
+            scores.items(), key=lambda x: x[1], reverse=True)
+        return sorted_scores[:k]
+
+    def rank_search_all(self, query: list[str], k: int = 10) -> list[int]:
+        """
+        Rank documents based on a query. Return the top k documents.
+        """
+        if self.ranker == None:
+            raise Exception("Cannot perform ranked search without a ranker.")
+
+        scores = {}
+        for doc_id in self.invertedIndex.get_doc_ids():
+            print(doc_id)
+            score = self.ranker.rank_document_query(doc_id, query)
+            if score > 0:
+                scores[doc_id] = score
 
         # sort scores ascending by value
         sorted_scores = sorted(

@@ -1,7 +1,7 @@
 import math
 
 from Document import Document
-from countedInvertedIndex import CountedInvertedIndex
+from CountedInvertedIndex import CountedInvertedIndex
 
 
 class Ranker():
