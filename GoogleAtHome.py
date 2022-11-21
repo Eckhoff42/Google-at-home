@@ -79,7 +79,7 @@ def crawl_to_file(seed, max_pages):
     save(index, active_documents)
 
 
-def test(query: str, nr_of_results: int = 10):
+def test_from_save(query: str, nr_of_results: int = 10):
     print("Loading index from files...")
     index = load()
     active_documents = PersistentStorage.read_document_names(
@@ -94,6 +94,24 @@ def test(query: str, nr_of_results: int = 10):
     print(f"query = {normalized_query}")
     ranked_documents = search_engine.rank_search_all(normalized_query)
     print_results(ranked_documents, active_documents, nr_of_results)
+
+
+def build_continuos_index(seed: str, max_pages: int = 10):
+    crawler = Webcrawler()
+    index = CountedInvertedIndex()
+    normalizer = Normalizer()
+
+    urls = []
+    i = 0
+    for url, content in crawler.continuos_crawl(seed, max_pages):
+        print(f"    creating index from {url}, {i}/{max_pages}")
+        normalized_tokens = normalizer.normalize(content.split())
+        index.build_index(i, normalized_tokens)
+        urls.append((i, url))
+        i += 1
+
+    index.save()
+    PersistentStorage.save_url_names("save/doc_names.txt", urls)
 
 
 def init_argparser():
@@ -115,7 +133,15 @@ def init_argparser():
 if __name__ == "__main__":
     args = init_argparser()
 
-    if args.seed:
-        crawl_to_file(args.seed, args.max_pages)
+    build_continuos_index(args.seed, args.max_pages)
+    test_from_save(args.query, args.results)
 
-    test(args.query, args.results)
+    # c = Webcrawler()
+    # content = c.continuos_crawl(args.seed, args.max_pages)
+
+    # for text in content:
+    #     print("got text: ", text[0], len(text[1]))
+
+    # if args.seed:
+    #     crawl_to_file(args.seed, args.max_pages)
+    # test(args.query, args.results)

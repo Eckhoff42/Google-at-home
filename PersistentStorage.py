@@ -25,6 +25,16 @@ def read_document_names(filename: str):
     return active_documents
 
 
+def save_url_names(filename: str, urls: list[int, str]):
+    """
+    Save the document names to a file
+    """
+    with open(filename, 'w') as file:
+        for id, url in urls:
+            file.write(str(id) + ": " +
+                       url + "\n")
+
+
 def write_index_to_file(index, filename: str):
     """
     Write the index to a file

@@ -73,20 +73,6 @@ class Webcrawler():
         self.robot_files[root_url] = allowed, disallowed
         return True
 
-    def crawl_url(self, url: str):
-        # read robots.txt
-        if not self.robots_allowed(url):
-            print(f"{url} does not allow robots")
-            return
-
-        try:
-            response = request.urlopen(url)
-            if response.getcode() == 200:
-                self.parse_content(url, response.read())
-        except Exception as e:
-            pass
-            print(f"could not crawl robot url: {url} | {e}")
-
     def save_to_file(self, url: str, soup: BeautifulSoup):
         # create temp directory if not exists
         if not os.path.exists("temp"):
@@ -104,7 +90,14 @@ class Webcrawler():
 
         file.close()
 
-    def parse_content(self, url: str, html: str):
+    def get_content(self, url: str, soup: BeautifulSoup) -> str:
+        content = ""
+        for tag in soup.find_all(['h1', 'h2', 'h3', 'p']):
+            content += f"{tag.text}\n"
+
+        return url, content
+
+    def parse_content_to_file(self, url: str, html: str):
         soup = BeautifulSoup(html, 'html.parser')
         heading = soup.find_all('h1')
 
@@ -115,6 +108,18 @@ class Webcrawler():
             normalized_url = self.normalize_url(link.get('href'))
             if normalized_url is not None:
                 self.add_url(normalized_url)
+
+    def parse_content(self, url: str, html: str):
+        soup = BeautifulSoup(html, 'html.parser')
+        heading = soup.find_all('h1')
+
+        for link in soup.find_all('a'):
+            normalized_url = self.normalize_url(link.get('href'))
+            if normalized_url is not None:
+                self.add_url(normalized_url)
+
+        if heading:
+            return self.get_content(url, soup)
 
     def normalize_url(self, url: str):
         allowed_languages = ["en", "no"]
@@ -137,6 +142,20 @@ class Webcrawler():
 
         return url
 
+    def crawl_url(self, url: str):
+        # read robots.txt
+        if not self.robots_allowed(url):
+            print(f"{url} does not allow robots")
+            pass
+
+        try:
+            response = request.urlopen(url)
+            if response.getcode() == 200:
+                return self.parse_content(url, response.read())
+        except Exception as e:
+            print(f"could not crawl robot url: {url} | {e}")
+            pass
+
     def crawl(self, start_url: str, max_pages: int):
         self.add_url(start_url)
         while len(self.visited) < max_pages:
@@ -145,6 +164,17 @@ class Webcrawler():
                 break
             print(f"crawling {url}")
             self.crawl_url(url)
+
+    def continuos_crawl(self, start_url: str, max_pages: int):
+        self.add_url(start_url)
+        while len(self.visited) < max_pages:
+            url = self.next_url()
+            if url is None:
+                break
+            # print(f"crawling {url}")
+            content = self.crawl_url(url)
+            if content != None:
+                yield content
 
 
 def init_argparser():
