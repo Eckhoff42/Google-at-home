@@ -2,6 +2,7 @@ import argparse
 import os
 import time
 from urllib import request
+import urllib.robotparser
 from bs4 import BeautifulSoup
 import re
 
@@ -30,6 +31,12 @@ class Webcrawler():
     def get_root_url(self, url: str) -> str:
         # regex get the first part of url
         return re.search(r"(https?://[^/]+)", url).group(1)
+
+    def robots_ok(self, url: str) -> bool:
+        rp = urllib.robotparser.RobotFileParser()
+        rp.set_url(self.get_root_url(url) + "/robots.txt")
+        rp.read()
+        rp.can_fetch("*", url)
 
     def robots_allowed(self, url: str) -> bool:
         root_url = self.get_root_url(url)
@@ -150,7 +157,7 @@ class Webcrawler():
             pass
 
         try:
-            response = request.urlopen(url)
+            response = request.urlopen(url, timeout=1)
             if response.getcode() == 200:
                 return self.parse_content(url, response.read())
         except Exception as e:
@@ -174,7 +181,6 @@ class Webcrawler():
             url = self.next_url()
             if url is None:
                 break
-            # print(f"crawling {url}")
             content = self.crawl_url(url)
             if content != None:
                 yield content
