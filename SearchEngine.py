@@ -136,7 +136,6 @@ class SearchEngine():
 
         scores = {}
         for doc_id in self.invertedIndex.get_doc_ids():
-            print(doc_id)
             score = self.ranker.rank_document_query(doc_id, query)
             if score > 0:
                 scores[doc_id] = score

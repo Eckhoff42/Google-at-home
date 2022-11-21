@@ -76,7 +76,7 @@ class Webcrawler():
     def crawl_url(self, url: str):
         # read robots.txt
         if not self.robots_allowed(url):
-            # print(f"{url} does not allow robots")
+            print(f"{url} does not allow robots")
             return
 
         try:
@@ -85,15 +85,15 @@ class Webcrawler():
                 self.parse_content(url, response.read())
         except Exception as e:
             pass
-            # print(f"could not crawl robot url: {url} | {e}")
+            print(f"could not crawl robot url: {url} | {e}")
 
     def save_to_file(self, url: str, soup: BeautifulSoup):
         # create temp directory if not exists
         if not os.path.exists("temp"):
             os.makedirs("temp")
 
-        shortened = re.sub(r"(https?://)", "", url)
-        shortened = re.sub(r"/", "_", shortened)
+        # shortened = re.sub(r"(https?://)", "", url)
+        shortened = re.sub(r"/", r"\\", url)
         file_name = "temp/" + shortened + ".txt"
 
         # create file and write to it
