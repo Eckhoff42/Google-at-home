@@ -92,7 +92,6 @@ class Webcrawler():
         if not os.path.exists("temp"):
             os.makedirs("temp")
 
-        # shortened = re.sub(r"(https?://)", "", url)
         shortened = re.sub(r"/", r"\\", url)
         file_name = "temp/" + shortened + ".txt"
 
