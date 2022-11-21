@@ -117,3 +117,18 @@ def read_document_frequency_from_file(filename: str):
             copy[term] = int(line[1])
 
     return copy
+
+
+def save_visited(visited, file_name: str):
+    with open(file_name, 'w') as f:
+        for item in visited:
+            f.write("%s\n" % item)
+
+
+def read_visited(file_name: str):
+    visited = []
+    with open(file_name, 'r') as f:
+        for line in f:
+            visited.append(line.strip())
+
+    return visited

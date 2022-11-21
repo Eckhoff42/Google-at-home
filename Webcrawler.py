@@ -1,6 +1,7 @@
 import argparse
 import os
 import time
+import PersistentStorage
 from urllib import request
 import urllib.robotparser
 from bs4 import BeautifulSoup
@@ -18,7 +19,7 @@ class Webcrawler():
 
     def add_url(self, url: str):
         if len(self.queue) < self.queue_size:
-            if url not in self.visited:
+            if url not in self.visited and url not in self.queue:
                 self.queue.add(url)
 
     def next_url(self) -> str:
@@ -184,6 +185,12 @@ class Webcrawler():
             content = self.crawl_url(url)
             if content != None:
                 yield content
+
+    def save(self):
+        PersistentStorage.save_visited(self.visited, "save/visited.txt")
+
+    def load(self):
+        self.visited = PersistentStorage.read_visited("save/visited.txt")
 
 
 def init_argparser():

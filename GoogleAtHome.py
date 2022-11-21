@@ -87,8 +87,9 @@ def test_from_save(query: str, nr_of_results: int = 10):
     print_results(ranked_documents, active_documents, nr_of_results)
 
 
-def build_continuos_index(seed: str, max_pages: int = 10, timeout: int = 60, index: CountedInvertedIndex = None):
-    crawler = Webcrawler()
+def build_continuos_index(seed: str, max_pages: int = 10, timeout: int = 60, index: CountedInvertedIndex = None, crawler: Webcrawler = None):
+    if crawler is None:
+        crawler = Webcrawler()
     if index is None:
         index = CountedInvertedIndex()
     normalizer = Normalizer()
@@ -103,6 +104,7 @@ def build_continuos_index(seed: str, max_pages: int = 10, timeout: int = 60, ind
         i += 1
 
     index.save()
+    crawler.save()
     PersistentStorage.save_url_names("save/doc_names.txt", urls)
     print("Index saved")
 
@@ -128,8 +130,10 @@ if __name__ == "__main__":
 
     index = CountedInvertedIndex()
     index.load()
+    crawler = Webcrawler()
+    crawler.load()
 
-    build_continuos_index(args.seed, args.max_pages, 60, index)
+    build_continuos_index(args.seed, args.max_pages, 60)
 
     # index = CountedInvertedIndex()
     # index.load()

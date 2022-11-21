@@ -30,12 +30,17 @@ class CountedInvertedIndex(BaseInvertedIndex):
 
     def load(self):
         """Read the index from a file"""
-        self.index = PersistentStorage.read_index_from_file(
-            "save/index.txt")
-        self.term_frequency = PersistentStorage.read_term_frequency_from_file(
-            "save/tf.txt")
-        self.document_frequency = PersistentStorage.read_document_frequency_from_file(
-            "save/df.txt")
+        # check if the file save/index.txt exists
+        try:
+            self.index = PersistentStorage.read_index_from_file(
+                "save/index.txt")
+            self.term_frequency = PersistentStorage.read_term_frequency_from_file(
+                "save/tf.txt")
+            self.document_frequency = PersistentStorage.read_document_frequency_from_file(
+                "save/df.txt")
+        except FileNotFoundError:
+            print("Cant find the save files")
+            raise FileNotFoundError
 
     def get_doc_ids(self) -> list[int]:
         """Get the document IDs in the collection"""
