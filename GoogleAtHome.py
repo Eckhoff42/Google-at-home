@@ -128,25 +128,12 @@ def init_argparser():
 if __name__ == "__main__":
     args = init_argparser()
 
-    index = CountedInvertedIndex()
-    index.load()
-    crawler = Webcrawler()
-    crawler.load()
-
-    build_continuos_index(args.seed, args.max_pages, 60)
-
     # index = CountedInvertedIndex()
     # index.load()
-    # index.print_stats()
+    # crawler = Webcrawler()
+    # crawler.load()
 
-    # test_from_save(args.query, args.results)
-
-    # c = Webcrawler()
-    # content = c.continuos_crawl(args.seed, args.max_pages)
-
-    # for text in content:
-    #     print("got text: ", text[0], len(text[1]))
-
-    # if args.seed:
-    #     crawl_to_file(args.seed, args.max_pages)
-    # test(args.query, args.results)
+    # standard run
+    if args.seed is not None:
+        build_continuos_index(args.seed, args.max_pages, 60)
+    test_from_save(args.query, args.results)
