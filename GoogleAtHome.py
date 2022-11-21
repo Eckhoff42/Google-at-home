@@ -1,6 +1,7 @@
 
 import argparse
 import os
+import PersistentStorage
 from Document import Document
 from Normalizer import Normalizer
 from Ranker import Ranker
@@ -39,18 +40,14 @@ def read_files_in_dir(dir_name: str) -> list[Document]:
 
 
 def save(index: CountedInvertedIndex, active_documents: list[Document]):
-    index.write_index_to_file("save/index.txt")
-    index.write_document_frequency_to_file("save/df.txt")
-    index.write_term_frequency_to_file("save/tf.txt")
-    index.save_document_names("save/doc_names.txt", active_documents)
+    index.save()
+    PersistentStorage.save_document_names(
+        "save/doc_names.txt", active_documents)
 
 
 def load():
     index = CountedInvertedIndex()
-    index.read_index_from_file("save/index.txt")
-    index.read_document_frequency_from_file("save/df.txt")
-    index.read_term_frequency_from_file("save/tf.txt")
-
+    index.load()
     return index
 
 
@@ -85,7 +82,8 @@ def crawl_to_file(seed, max_pages):
 def test(query: str, nr_of_results: int = 10):
     print("Loading index from files...")
     index = load()
-    active_documents = index.read_document_names("save/doc_names.txt")
+    active_documents = PersistentStorage.read_document_names(
+        "save/doc_names.txt")
     normalizer = Normalizer()
     ranker = Ranker(index)
     search_engine = SearchEngine(index, ranker)
