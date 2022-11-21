@@ -1,5 +1,6 @@
 import argparse
 import os
+import time
 from urllib import request
 from bs4 import BeautifulSoup
 import re
@@ -165,9 +166,11 @@ class Webcrawler():
             print(f"crawling {url}")
             self.crawl_url(url)
 
-    def continuos_crawl(self, start_url: str, max_pages: int):
+    def continuos_crawl(self, start_url: str, max_pages: int, timeout: int = 10):
         self.add_url(start_url)
-        while len(self.visited) < max_pages:
+
+        start = time.time()
+        while len(self.visited) < max_pages and time.time() - start < timeout:
             url = self.next_url()
             if url is None:
                 break

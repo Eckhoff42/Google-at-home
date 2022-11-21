@@ -39,18 +39,6 @@ def read_files_in_dir(dir_name: str) -> list[Document]:
     return documents
 
 
-def save(index: CountedInvertedIndex, active_documents: list[Document]):
-    index.save()
-    PersistentStorage.save_document_names(
-        "save/doc_names.txt", active_documents)
-
-
-def load():
-    index = CountedInvertedIndex()
-    index.load()
-    return index
-
-
 def crawl_to_file(seed, max_pages):
     # initialize directories "save" and "temp"
     if not os.path.exists("temp"):
@@ -76,12 +64,15 @@ def crawl_to_file(seed, max_pages):
         normalized_tokens = normalizer.normalize(document.get_tokens())
         index.build_index(document.doc_id, normalized_tokens)
 
-    save(index, active_documents)
+    index.save()
+    PersistentStorage.save_document_names(
+        "save/doc_names.txt", active_documents)
 
 
 def test_from_save(query: str, nr_of_results: int = 10):
     print("Loading index from files...")
-    index = load()
+    index = CountedInvertedIndex()
+    index.load()
     active_documents = PersistentStorage.read_document_names(
         "save/doc_names.txt")
     normalizer = Normalizer()
@@ -96,15 +87,15 @@ def test_from_save(query: str, nr_of_results: int = 10):
     print_results(ranked_documents, active_documents, nr_of_results)
 
 
-def build_continuos_index(seed: str, max_pages: int = 10):
+def build_continuos_index(seed: str, max_pages: int = 10, timeout: int = 60):
     crawler = Webcrawler()
     index = CountedInvertedIndex()
     normalizer = Normalizer()
 
     urls = []
     i = 0
-    for url, content in crawler.continuos_crawl(seed, max_pages):
-        print(f"    creating index from {url}, {i}/{max_pages}")
+    for url, content in crawler.continuos_crawl(seed, max_pages, timeout):
+        print(f"creating index from {url}")
         normalized_tokens = normalizer.normalize(content.split())
         index.build_index(i, normalized_tokens)
         urls.append((i, url))
@@ -112,6 +103,7 @@ def build_continuos_index(seed: str, max_pages: int = 10):
 
     index.save()
     PersistentStorage.save_url_names("save/doc_names.txt", urls)
+    print("Index saved")
 
 
 def init_argparser():
@@ -133,8 +125,13 @@ def init_argparser():
 if __name__ == "__main__":
     args = init_argparser()
 
-    build_continuos_index(args.seed, args.max_pages)
-    test_from_save(args.query, args.results)
+    build_continuos_index(args.seed, args.max_pages, 3)
+
+    index = CountedInvertedIndex()
+    index.load()
+    index.print_stats()
+
+    # test_from_save(args.query, args.results)
 
     # c = Webcrawler()
     # content = c.continuos_crawl(args.seed, args.max_pages)

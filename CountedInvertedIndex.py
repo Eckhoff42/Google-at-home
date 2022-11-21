@@ -119,9 +119,8 @@ class CountedInvertedIndex(BaseInvertedIndex):
     def _total_terms(self) -> int:
         """Get the total number of terms in the collection"""
         total_terms = 0
-        for document in self.document_frequency:
-            for term in self.document_frequency[document]:
-                total_terms += self.document_frequency[document][term]
+        for posting in self.index.values():
+            total_terms += len(posting)
 
         return total_terms
 
@@ -145,3 +144,9 @@ class CountedInvertedIndex(BaseInvertedIndex):
             return math.log((len(self.term_frequency) / self.get_df(term)), 10)
         else:
             return 0
+
+    def print_stats(self):
+        """Print the index statistics"""
+        print("Number of documents: ", len(self.term_frequency))
+        print("Number of terms: ", len(self.index))
+        print("Number of postings: ", self._total_terms())
