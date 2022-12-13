@@ -159,7 +159,7 @@ The search engine given a `query` evaluates the string and finds matching docume
 ### Search(operator = "AND"):
 after parsing the query normalizing and stemming the terms it looks for documents where all search terms are present
 
-### Search(operator = "AND"):
+### Search(operator = "OR"):
 after parsing the query normalizing and stemming the terms it looks for documents where at least one search term is present
 
 ### Search_n_of_m():
