@@ -21,7 +21,7 @@ The selection of algorithms is inspired by the Stanford course [Introduction to 
     - [Gamma encoding](#gamma-encoding)
   - [Search engine](#search-engine)
     - [Search(operator = "AND"):](#searchoperator--and)
-    - [Search(operator = "AND"):](#searchoperator--and-1)
+    - [Search(operator = "OR"):](#searchoperator--or)
     - [Search_n_of_m():](#search_n_of_m)
   - [Ranker](#ranker)
     - [Query evaluation](#query-evaluation)
